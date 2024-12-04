@@ -12,6 +12,8 @@ bs4 = "^0.0.2"
 pydantic = "^2.10.3"
 beautifulsoup4 = "^4.12.3"
 python-dotenv = "^1.0.1"
+selenium = "^4.27.1"
+webdriver-manager = "^4.0.2"
 
 
 [build-system]
