@@ -5,4 +5,4 @@ from models.grupo import Grupo
 class Subgrupo(BaseModel):
     descricao: str
     link: str
-    grupo: Grupo
+    grupo: Grupo 

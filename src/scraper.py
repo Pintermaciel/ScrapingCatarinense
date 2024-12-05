@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import os
+from models.categoria import Categoria
 from models.grupo import Grupo
 from models.subgrupo import Subgrupo
 from utils.logger import get_logger
@@ -20,7 +21,7 @@ class Scraper:
     def fetch_html(self):
         try:
             options = webdriver.ChromeOptions()
-            options.headless = True 
+            options.headless = False
             driver = webdriver.Chrome(
                 service=Service(
                     ChromeDriverManager().install()
@@ -77,7 +78,7 @@ class Scraper:
                         )
 
             for g in grupos_objetos:
-                print(g)
+                print(f"grupo: {g}")
 
             return grupos_objetos
         except Exception as e:
@@ -88,7 +89,7 @@ class Scraper:
         try:
             soup = BeautifulSoup(html, 'html.parser')
 
-            subgrupos_objetos = []
+            subgrupos_objetos = {}
 
             grupos_nome_map = {
                 grupo.descricao.lower(): grupo 
@@ -115,20 +116,66 @@ class Scraper:
                         )
 
                         if grupo_nome:
-                            subgrupos_objetos.append(
-                                Subgrupo(
+                            subgrupos_objetos[descricao.lower()] = Subgrupo(
                                     descricao=descricao,
                                     link=link,
                                     grupo=grupo_nome
                                 )
-                            )
 
             for s in subgrupos_objetos:
-                print(s)
+                print(f"subgrupo: {s}")
             return subgrupos_objetos
 
         except Exception as e:
             logger.error(f"Erro ao extrair subgrupos: {e}")
+            return None
+
+    def get_categorias(self, html, subgrupos_objetos):
+        try:
+            soup = BeautifulSoup(html, 'html.parser')
+
+            categorias_objetos = {}
+
+            subgrupos_nome_map = {
+                subgrupo.descricao.lower(): subgrupo
+                for subgrupo in subgrupos_objetos.values()
+            }
+
+            for categoria in soup.select(
+                'div.submenu.submenu--level-3'
+                ):
+                for li in categoria.find_all(
+                    'li', 
+                    class_='submenu__item'
+                ):
+                    tag_a = li.find('a')
+                    if tag_a:
+                        descricao = tag_a.get_text(strip=True)
+                        link = tag_a.get('href')
+
+                        # Procurar o subgrupo correspondente
+                        subgrupo_nome = next(
+                            (
+                                subgrupo for nome, subgrupo in subgrupos_nome_map.items()
+                                if nome in link.lower()
+                            ),
+                            None
+                        )
+
+                        if subgrupo_nome:
+                            categorias_objetos[descricao.lower()] = Categoria(
+                                descricao=descricao,
+                                link=link,
+                                subgrupo=subgrupo_nome
+                            )
+
+            for c in categorias_objetos:
+                print(f"categoria: {c}")
+
+            return categorias_objetos
+
+        except Exception as e:
+            logger.error(f"Erro ao extrair categorias: {e}")
             return None
 
 
@@ -137,4 +184,7 @@ html = scr.fetch_html()
 if html:
     grupos_objetos = scr.get_grupos(html)
     if grupos_objetos:
-        scr.get_subgrupos(html, grupos_objetos)  # Passa os grupos para o método de subgrupos
+        subgrupos = scr.get_subgrupos(html, grupos_objetos)
+    if subgrupos:
+        categorias = scr.get_categorias(html, subgrupos)
+    
