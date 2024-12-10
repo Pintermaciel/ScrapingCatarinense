@@ -14,8 +14,32 @@ beautifulsoup4 = "^4.12.3"
 python-dotenv = "^1.0.1"
 selenium = "^4.27.1"
 webdriver-manager = "^4.0.2"
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+blue = "^0.9.1"
+isort = "^5.13.2"
+mkdocs-material = "^9.5.48"
+mkdocstrings = "^0.27.0"
+mkdocstrings-python = "^1.12.2"
+taskipy = "^1.14.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "."
+]
+addopts = "--doctest-modules"
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.taskipy.tasks]
+lint = "blue --check --diff . && isort --check --diff ."
+format = "blue . && isort ."
+docs = "mkdocs serve"
+test = "pytest -s -x "

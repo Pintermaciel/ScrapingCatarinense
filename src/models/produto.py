@@ -1,9 +1,11 @@
 from typing import Optional
+
 from pydantic import BaseModel
 
-from models.grupo import Grupo
-from models.subgrupo import Subgrupo
-from models.categoria import Categoria
+from src.models.categoria import Categoria
+from src.models.grupo import Grupo
+from src.models.subgrupo import Subgrupo
+
 
 class Produto(BaseModel):
     descricao: str
@@ -12,4 +14,3 @@ class Produto(BaseModel):
     grupo: Grupo
     subgrupo: Subgrupo
     categoria: Optional[Categoria]
-    

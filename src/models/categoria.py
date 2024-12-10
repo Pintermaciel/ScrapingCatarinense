@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-from models.subgrupo import Subgrupo
+from src.models.subgrupo import Subgrupo
+
 
 class Categoria(BaseModel):
     descricao: str

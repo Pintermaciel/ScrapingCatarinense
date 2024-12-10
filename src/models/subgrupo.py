@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 
-from models.grupo import Grupo
+from src.models.grupo import Grupo
+
 
 class Subgrupo(BaseModel):
     descricao: str
     link: str
-    grupo: Grupo 
+    grupo: Grupo

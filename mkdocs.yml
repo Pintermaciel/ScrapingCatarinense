@@ -1,0 +1,11 @@
+site_name: Scraping Catarinense
+repo_url: https://github.com/Pintermaciel/ScrapingCatarinense
+repo_name: ScrapingCatarinense
+edit_uri: tree/main/mkdocs.yml
+
+theme:
+  name: material
+  language: pt-BR
+
+markdown_extensions:
+  - attr_list
