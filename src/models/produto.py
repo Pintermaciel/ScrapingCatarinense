@@ -12,5 +12,5 @@ class Produto(BaseModel):
     link: str
     preco: float
     grupo: Grupo
-    subgrupo: Subgrupo
+    subgrupo: Optional[Subgrupo]
     categoria: Optional[Categoria]

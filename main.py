@@ -29,7 +29,9 @@ def main():
             }
 
         if grupos_objetos:
-            subgrupos, subgrupos_message = scraper.get_subgrupos(html, grupos_objetos)
+            subgrupos, subgrupos_message = scraper.get_subgrupos(
+                html, grupos_objetos
+            )
             logger.info(subgrupos_message)
 
             for subgrupo in subgrupos.values():
@@ -40,7 +42,9 @@ def main():
                 }
 
             if subgrupos:
-                categorias, categorias_message = scraper.get_categorias(html, subgrupos)
+                categorias, categorias_message = scraper.get_categorias(
+                    html, subgrupos
+                )
                 logger.info(categorias_message)
 
                 for categoria in categorias.values():
@@ -52,9 +56,22 @@ def main():
                     }
 
                 simplificador = DicionarioAninhador(dicionario_agrupados)
-                simplificador.aninhar()
+                dicionario_agrupados = simplificador.aninhar()
 
-                logger.info(f"Resultado final do aninhamento: {simplificador.obter_dicionario()}")
+                logger.info(
+                    f'Resultado final do aninhamento: {simplificador.obter_dicionario()}'
+                )
+
+                # Scrape products from all links
+                logger.info('Iniciando scraping de produtos...')
+                produtos = scraper.scrape_products(dicionario_agrupados)
+                logger.info(
+                    f'Total de categorias com produtos: {len(produtos)}'
+                )
+
+                # Log some statistics about the products found
+                total_produtos = sum(len(prods) for prods in produtos.values())
+                logger.info(f'Total de produtos encontrados: {total_produtos}')
 
 
 if __name__ == '__main__':
